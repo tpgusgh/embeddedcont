@@ -19,7 +19,7 @@ export const Carousel: React.FC<CarouselProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingSlide, setEditingSlide] = useState<number | null>(null);
-  const [direction, setDirection] = useState(0); // 애니메이션 방향
+  const [direction, setDirection] = useState(0); 
 
   const nextSlide = () => {
     setDirection(1);
