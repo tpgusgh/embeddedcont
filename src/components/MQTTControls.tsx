@@ -8,8 +8,8 @@ interface MQTTControlsProps {
 
 export const MQTTControls: React.FC<MQTTControlsProps> = ({ currentSlide }) => {
   const { isConnected, publishMessage } = useMQTT({
-    brokerUrl: 'wss://broker.emqx.io:8084/mqtt',
-    topic: 'carousel/slide',
+    brokerUrl: 'ws://10.150.2.255:9001', //bssm_smart 임
+    topic: 'hyunho/slide',
   });
 
   const handleSendSlide = () => {
