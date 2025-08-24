@@ -1,17 +1,18 @@
+// MQTTControls.tsx
 import React from 'react';
 import { Send } from 'lucide-react';
-import { useMQTT } from '../hooks/useMQTT';
 
 interface MQTTControlsProps {
   currentSlide: number;
+  publishMessage: (msg: string) => void; // 부모에서 받은 함수
+  isConnected: boolean;
 }
 
-export const MQTTControls: React.FC<MQTTControlsProps> = ({ currentSlide }) => {
-  const { isConnected, publishMessage } = useMQTT({
-    brokerUrl: 'ws://10.150.2.255:9001', //bssm_smart 임
-    topic: 'hyunho/slide',
-  });
-
+export const MQTTControls: React.FC<MQTTControlsProps> = ({
+  currentSlide,
+  publishMessage,
+  isConnected,
+}) => {
   const handleSendSlide = () => {
     const slideNumber = currentSlide + 1;
     publishMessage(slideNumber.toString());
