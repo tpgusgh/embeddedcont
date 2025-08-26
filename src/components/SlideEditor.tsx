@@ -37,24 +37,24 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center p-8">
-      <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 w-full max-w-md border border-white/20 shadow-2xl">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white/90">
+    <div className="relative w-full h-full flex flex-col items-center justify-center p-3">
+      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 w-full max-w-xs border border-white/20 shadow-lg">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-lg font-bold text-white/90">
             {slide.id}
           </h2>
           {!isEditing && (
             <button
               onClick={() => onEditToggle(slide.id)}
-              className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors duration-200 text-white/80 hover:text-white"
+              className="p-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors duration-200 text-white/80 hover:text-white"
             >
-              <Edit3 size={18} />
+              <Edit3 size={14} />
             </button>
           )}
         </div>
 
-        <div className="space-y-6">
-          <div className="w-full h-48 bg-white/10 rounded-xl overflow-hidden border border-white/20">
+        <div className="space-y-3">
+          <div className="w-full h-24 bg-white/10 rounded-md overflow-hidden border border-white/20">
             {slide.imageUrl ? (
               <img
                 src={slide.imageUrl}
@@ -66,61 +66,61 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-white/50">
-                <Image size={48} />
+                <Image size={28} />
               </div>
             )}
           </div>
 
           {isEditing ? (
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">
-                  화장품 이름을 입력해주세요
+                <label className="block text-[11px] font-medium text-white/70 mb-1">
+                  화장품 이름
                 </label>
                 <input
                   type="text"
                   value={tempName}
                   onChange={(e) => setTempName(e.target.value)}
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs"
                   placeholder="Enter name"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">
-                  이미지 URL을 삽입해주세요
+                <label className="block text-[11px] font-medium text-white/70 mb-1">
+                  이미지 URL
                 </label>
                 <input
                   type="url"
                   value={tempImageUrl}
                   onChange={(e) => setTempImageUrl(e.target.value)}
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                  className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs"
                   placeholder="Enter image URL"
                 />
               </div>
-              <div className="flex space-x-3">
+              <div className="flex space-x-2">
                 <button
                   onClick={handleSave}
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded transition-colors duration-200 flex items-center justify-center space-x-1 text-xs"
                 >
-                  <Save size={16} />
+                  <Save size={12} />
                   <span>저장</span>
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="flex-1 bg-white/20 hover:bg-white/30 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                  className="flex-1 bg-white/20 hover:bg-white/30 text-white py-1 px-2 rounded transition-colors duration-200 flex items-center justify-center space-x-1 text-xs"
                 >
-                  <X size={16} />
+                  <X size={12} />
                   <span>취소</span>
                 </button>
               </div>
             </div>
           ) : (
             <div className="text-center">
-              <h3 className="text-xl font-semibold text-white/90 mb-2">
+              <h3 className="text-base font-semibold text-white/90 mb-1">
                 {slide.name || 'Untitled Slide'}
               </h3>
-              <p className="text-white/60 text-sm">
-                편집하고싶으면 위에 아이콘을 눌러주세요
+              <p className="text-white/60 text-[11px]">
+                편집하려면 위 아이콘을 눌러주세요
               </p>
             </div>
           )}
