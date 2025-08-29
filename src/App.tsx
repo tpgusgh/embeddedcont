@@ -28,10 +28,10 @@ function App() {
 
   // OK 제스처 전송 완료 애니메이션 상태
   const [showSent, setShowSent] = useState(false);
-
+  const [faceData, setFaceData] = useState<any>(null);
   // MQTT 연결
   const { isConnected, publishMessage } = useMQTT({
-    brokerUrl: "ws://192.168.169.6:9001", // 브로커 주소
+    brokerUrl: "ws://192.168.171.6:9001", // 브로커 주소
     topic: "hyunho/slide",
     clientId: "carouselClient_" + Math.random().toString(16).substr(2, 8),
   });
@@ -54,7 +54,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch("http://192.168.169.197:8000/gesture");
+        const res = await fetch("http://192.168.171.198:8000/gesture");
         const data = await res.json();
 
         if (data.gesture === "LEFT") {
@@ -77,6 +77,22 @@ function App() {
     return () => clearInterval(interval);
   }, [currentSlideIndex, publishMessage]);
 
+  // 👉 face 데이터 fetch
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch("http://192.168.171.198:8000/face");
+        const data = await res.json();
+        setFaceData(data);
+      } catch (err) {
+        console.error("face fetch error", err);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600 relative">
       <AnimatePresence>
@@ -93,6 +109,16 @@ function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {faceData && (
+        <div className="absolute top-4 left-4 z-50 bg-black/50 text-white p-4 rounded-xl text-sm max-w-xs">
+          <pre className="whitespace-pre-wrap break-words">
+            {JSON.stringify(faceData, null, 2)}
+          </pre>
+        </div>
+      )}
+
+
 
       {/* 배경 효과 */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.1),transparent_50%)] pointer-events-none" />
