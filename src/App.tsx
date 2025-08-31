@@ -140,10 +140,16 @@ function App() {
         {/* MQTT 컨트롤 버튼 */}
         <div className="flex-shrink-0 flex justify-center pb-8">
           <MQTTControls
-            publishMessage={publishMessage}
+            publishMessage={(msg) => {
+              publishMessage(msg);
+              // 버튼으로 보낼 때도 애니메이션 실행
+              setShowSent(true);
+              setTimeout(() => setShowSent(false), 1500);
+            }}
             isConnected={isConnected}
             currentSlide={currentSlideIndex}
           />
+
         </div>
       </div>
     </div>
