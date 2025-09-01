@@ -30,7 +30,7 @@ function App() {
 
   // MQTT 연결
   const { isConnected, publishMessage } = useMQTT({
-    brokerUrl: "ws://192.168.236.6:9001",
+    brokerUrl: "ws://10.150.1.196:9001",
     topic: "hyunho/slide",
     clientId: "carouselClient_" + Math.random().toString(16).substr(2, 8),
   });
@@ -80,11 +80,12 @@ function App() {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch("http://192.168.236.6:8000/analyze", {
-          method: "POST",
+        const res = await fetch("http://10.150.2.23:8000/analyze", {
+          method: "GET",
         });
         const data = await res.json();
         setAnalyzeData(data);
+        console.log(data);
       } catch (err) {
         console.error("analyze fetch error", err);
       }
@@ -111,30 +112,33 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* analyze 데이터: 중앙 상단, 한 줄, 스크롤 가능 */}
-      {analyzeData && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[1000] bg-black/50 backdrop-blur-md px-4 py-2 rounded-2xl shadow-md text-white text-sm flex gap-2 overflow-x-auto whitespace-nowrap max-w-[90vw]">
-          {Object.entries(analyzeData.results).map(([key, value]: [string, any]) => {
-            const keyMap: Record<string, string> = {
-              pigmentation: "색소침착",
-              moisture: "수분",
-              elasticity_R2: "탄력",
-              wrinkle_Ra: "주름",
-              pore: "모공",
-            };
-            const label = keyMap[key] || key;
-            const shortDesc = value.description?.split("-")[0].trim() || "";
-            return (
-              <span
-                key={key}
-                className="bg-white/20 px-3 py-1 rounded-full flex-shrink-0"
-              >
-                {label}: {shortDesc}
-              </span>
-            );
-          })}
-        </div>
-      )}
+{analyzeData?.results && (
+  <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 
+                  bg-black/50 backdrop-blur-md px-6 py-3 rounded-2xl 
+                  shadow-md text-white text-sm flex gap-2">
+    {Object.entries(analyzeData.results).map(([key, value]: [string, any]) => {
+      const labelMap: Record<string, string> = {
+        pigmentation: "색소침착",
+        moisture: "수분",
+        elasticity_R2: "탄력",
+        wrinkle_Ra: "주름",
+        pore: "모공",
+      };
+
+      // description(한글) key 찾기
+      const descKey = Object.keys(value).find((k) => k.startsWith("description"));
+      const desc = descKey ? value[descKey] : "";
+
+      return (
+        <span key={key} className="bg-white/20 px-4 py-1 rounded-full">
+          {labelMap[key] || key}:{<br></br>} {desc}
+        </span>
+      );
+    })}
+  </div>
+)}
+
+
 
       {/* 배경 효과 */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.1),transparent_50%)] pointer-events-none" />
