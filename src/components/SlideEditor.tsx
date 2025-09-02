@@ -59,7 +59,7 @@ export const SlideEditor: React.FC<SlideEditorProps> = ({
         {/* 본문(스크롤 되는 영역 전체) */}
         <div className="space-y-4">
           {/* 이미지 영역 (고정 높이, 이미지가 클 때는 내부에서 스크롤됨) */}
-          <div className="w-full h-56 bg-white/10 rounded-lg overflow-hidden border border-white/20">
+          <div className="w-full h-40 bg-white/10 rounded-lg overflow-hidden border border-white/20">
             {slide.imageUrl ? (
               <img
                 src={slide.imageUrl}

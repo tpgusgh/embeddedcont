@@ -26,7 +26,10 @@ function App() {
     useLocalStorage<number>("carousel-current-index", 0);
 
   const [showSent, setShowSent] = useState(false);
+
+  // analyzeData + fetch 오류 상태
   const [analyzeData, setAnalyzeData] = useState<any>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // MQTT 연결
   const { isConnected, publishMessage } = useMQTT({
@@ -76,20 +79,27 @@ function App() {
     return () => clearInterval(interval);
   }, [currentSlideIndex, publishMessage]);
 
-  // 1초마다 /analyze 데이터 fetch
+  // 2초마다 /analyze 데이터 fetch (라파 최적화)
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch("http://10.150.2.23:8000/analyze", {
-          method: "GET",
-        });
+        const res = await fetch("http://10.150.2.23:8000/analyze");
+        if (!res.ok) throw new Error(res.statusText);
         const data = await res.json();
-        setAnalyzeData(data);
-        console.log(data);
-      } catch (err) {
+
+        // 이전 데이터와 다를 때만 업데이트
+        setAnalyzeData((prev: any) => {
+          const prevStr = JSON.stringify(prev);
+          const newStr = JSON.stringify(data);
+          return prevStr !== newStr ? data : prev;
+        });
+
+        setFetchError(null);
+      } catch (err: any) {
         console.error("analyze fetch error", err);
+        setFetchError(err.message);
       }
-    }, 1000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, []);
@@ -112,33 +122,40 @@ function App() {
         )}
       </AnimatePresence>
 
-{analyzeData?.results && (
-  <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 
-                  bg-black/50 backdrop-blur-md px-6 py-3 rounded-2xl 
-                  shadow-md text-white text-sm flex gap-2">
-    {Object.entries(analyzeData.results).map(([key, value]: [string, any]) => {
-      const labelMap: Record<string, string> = {
-        pigmentation: "색소침착",
-        moisture: "수분",
-        elasticity_R2: "탄력",
-        wrinkle_Ra: "주름",
-        pore: "모공",
-      };
+      {/* analyze fetch 오류 표시 */}
+      {fetchError && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded z-50">
+          Fetch Error: {fetchError}
+        </div>
+      )}
 
-      // description(한글) key 찾기
-      const descKey = Object.keys(value).find((k) => k.startsWith("description"));
-      const desc = descKey ? value[descKey] : "";
+      {/* analyze 결과 표시 */}
+      {analyzeData?.results && (
+        <div className="fixed top-1 left-1/2 -translate-x-1/2 z-50 
+                        bg-black/50 backdrop-blur-md px-6 py-3 rounded-2xl 
+                        shadow-md text-white text-sm flex gap-2 ">
+          {Object.entries(analyzeData.results).map(([key, value]: [string, any]) => {
+            const labelMap: Record<string, string> = {
+              pigmentation: "색소침착",
+              moisture: "수분",
+              elasticity_R2: "탄력",
+              wrinkle_Ra: "주름",
+              pore: "모공",
+            };
 
-      return (
-        <span key={key} className="bg-white/20 px-4 py-1 rounded-full">
-          {labelMap[key] || key}:{<br></br>} {desc}
-        </span>
-      );
-    })}
-  </div>
-)}
+            const descKey = Object.keys(value).find((k) =>
+              k.startsWith("description")
+            );
+            const desc = descKey ? value[descKey] : "";
 
-
+            return (
+              <span key={key} className="bg-white/20 px-4 py-1 rounded-full">
+                {labelMap[key] || key}:{<br />} {desc}
+              </span>
+            );
+          })}
+        </div>
+      )}
 
       {/* 배경 효과 */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.1),transparent_50%)] pointer-events-none" />
