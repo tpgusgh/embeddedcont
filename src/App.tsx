@@ -56,7 +56,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch("http://192.168.236.197:8000/gesture");
+        const res = await fetch("http://10.150.1.8:8000/gesture");
         const data = await res.json();
 
         if (data.gesture === "LEFT") {
@@ -97,7 +97,7 @@ function App() {
         setFetchError(null);
       } catch (err: any) {
         console.error("analyze fetch error", err);
-        setFetchError(err.message);
+
       }
     }, 2000);
 
@@ -136,11 +136,11 @@ function App() {
                         shadow-md text-white text-sm flex gap-2 ">
           {Object.entries(analyzeData.results).map(([key, value]: [string, any]) => {
             const labelMap: Record<string, string> = {
-              pigmentation: "색소침착",
-              moisture: "수분",
-              elasticity_R2: "탄력",
-              wrinkle_Ra: "주름",
-              pore: "모공",
+              pigmentation: "pigmentation", //색소침착
+              moisture: "moisture", //수분
+              elasticity_R2: "elasticity", //탄력
+              wrinkle_Ra: "wrinkle", //주름
+              pore: "pore", //모공
             };
 
             const descKey = Object.keys(value).find((k) =>
